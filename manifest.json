@@ -1,0 +1,36 @@
+{
+	"manifest_version": 2,
+	"name": "FaviconSwitcher",
+	"version": "1.0",
+
+	"description": "Replace ugly favicon",
+
+	"icons": {
+		"48": "icons/border-48.png"
+	},
+	"browser_action": {
+		"default_icon": {
+			"48": "icons/sample.png"
+		},
+		"default_title": "Favicon Switcher",
+		"default_popup": "src/popup/popup.html",
+		"browser_style": true
+	},
+	"content_scripts": [
+		{
+			"matches": ["<all_urls>"],
+			"js": ["src/indexedDBWrapper.js", "favicon_switcher.js"]
+		}
+	],
+	"background": {
+		"scripts": ["src/indexedDBWrapper.js", "background.js"]
+	},
+	"permissions": ["tabs", "notifications", "activeTab", "storage"],
+	"web_accessible_resources": ["src/*"],
+	"browser_specific_settings": {
+		"gecko": {
+			"id": "sean@seanfeng.dev",
+			"strict_min_version": "42.0"
+		}
+	}
+}

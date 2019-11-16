@@ -1,0 +1,24 @@
+#drop_zone {
+	border: 5px solid blue;
+	width: 100%;
+	height: 100%;
+}
+
+#display_zone {
+	height: 300px;
+	overflow: auto;
+}
+.row_display {
+	display: flex;
+	justify-content: space-between;
+}
+
+.display_image {
+	text-align: center;
+}
+
+.display_pattern {
+}
+
+.display_checkbox {
+}
