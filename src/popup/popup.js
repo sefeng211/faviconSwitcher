@@ -10,11 +10,9 @@ let uploadImagePanel = {
 };
 
 // Ask the background script to update it's cache
-const pingUpdate = () => {
-  browser.runtime.sendMessage({
-    task: "UpdateCache"
-  });
-}
+const pingUpdate = (data) => {
+  browser.runtime.sendMessage(data);
+};
 
 const removeURLFromDB = url => {
   dbManager.remove(url, function(e) {
@@ -25,13 +23,13 @@ const removeURLFromDB = url => {
       );
       if (removeElement) {
         removeElement.parentNode.removeChild(removeElement);
-        pingUpdate();
+        pingUpdate({task: "UpdateCache"});
       }
     }
   });
 };
 
-function createSwitch(switchCounter) {
+function createSwitch(switchCounter, is_active) {
   let switchDiv = document.createElement("div");
   switchDiv.className = "display_checkbox";
 
@@ -42,11 +40,16 @@ function createSwitch(switchCounter) {
   switchButton.className = "visually-hidden";
   switchButton.id = "switch" + switchCounter;
 
-  //label.htmlFor = "switch" + switchCounter;
-  //label.appendChild(document.createTextNode("Label11"));
+  switchButton.checked = is_active;
+
+  switchButton.addEventListener("change", function(event) {
+    console.log(event);
+    const key = event.target.parentElement.parentElement.getAttribute("url");
+    console.log("toggle" + key + " " + this.checked);
+    pingUpdate({task: "UpdateUrlActive", url: key, active: this.checked});
+  });
 
   switchDiv.appendChild(switchButton);
-  //switchDiv.appendChild(label);
   return switchDiv;
 }
 
@@ -56,17 +59,17 @@ function loopSitePairs(data, index) {
   }
 
   var item = data[index][Object.keys(data[index])[0]];
-  var file = item.file;
-  var sitePattern = item.sitePattern;
-
-  var reader = new FileReader();
+  const file = item.file;
+  const sitePattern = item.sitePattern;
+  const is_active = item.active;
+  const reader = new FileReader();
 
   reader.onload = function(e) {
     var name = document.createElement("div");
     var image = document.createElement("img");
-    var switchButton = createSwitch(index);
-
+    var switchButton = createSwitch(index, is_active);
     var removeButton = document.createElement("button");
+
     removeButton.innerHTML = "Remove";
     removeButton.className = "browser-style";
 

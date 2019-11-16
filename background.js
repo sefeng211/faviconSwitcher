@@ -14,12 +14,40 @@ function updateFavicon(dbManager) {
       let item = ret[key][Object.keys(ret[key])[0]];
 
       if (item.file) {
-        storedFavicon[item.sitePattern] = item.file;
+        storedFavicon[item.sitePattern] = {
+          file: item.file,
+          active: item.active
+        };
       }
     }
   });
 }
 
+function UpdateUrlActive(dbManager, url, active) {
+  if (!dbManager.db) {
+    setTimeout(function() {
+      UpdateUrlActive(dbManager, url, active);
+    }, 1000);
+    return;
+  }
+
+  console.log("UpdateUrlActive!!!");
+  let keys = Object.keys(storedFavicon);
+  let data = storedFavicon[url];
+  if (data) {
+    data.sitePattern = url;
+    data.active = active;
+    dbManager.upsert(data, function(e) {
+      if (e === url) {
+        // Uploaded Successfully
+        console.log("Toggle Success");
+        updateFavicon(dbManager);
+      }
+    });
+  } else {
+    // Is it possible?
+  }
+}
 var dbManager = new IndexedDBWrapper();
 dbManager.openDB();
 
@@ -44,7 +72,10 @@ function findMatchFile(url) {
     if (compareURL(url, filter)) {
       // Don't need to null check here because only non-null files have
       // been added to storedFavicon.
-      return storedFavicon[filter];
+      const item = storedFavicon[filter];
+      if (item.active) {
+        return item.file;
+      }
     }
   }
   return null;
@@ -63,5 +94,10 @@ browser.runtime.onMessage.addListener(function(request, sender, sendMessage) {
   if (request.task === "UpdateCache") {
     console.log("Update cache");
     updateFavicon(dbManager);
+  } else if (request.task === "UpdateUrlActive") {
+    console.log("Update Url active");
+    const url = request.url;
+    const active = request.active;
+    UpdateUrlActive(dbManager, url, active);
   }
 });

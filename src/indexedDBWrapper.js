@@ -16,6 +16,14 @@ const dbName = "faviconDB112345";
 const storeName = "faviconStorage";
 const dbVersion = 1;
 
+const genUploadData = (sitePattern, file, active) => {
+  return {
+    sitePattern: sitePattern,
+    file: file,
+    active: active
+  };
+}
+
 class IndexedDBWrapper {
   constructor() {
     this.db;

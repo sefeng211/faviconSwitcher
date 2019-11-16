@@ -1,19 +1,3 @@
-window.indexeddbResult =
-  window.indexeddbResult ||
-  window.mozIndexeddbResult ||
-  window.webkitIndexeddbResult ||
-  window.msIndexeddbResult;
-
-window.IdbResultTransaction = window.IdbResultTransaction ||
-  window.webkitIdbResultTransaction ||
-  window.msIdbResultTransaction || { READ_WRITE: "readwrite" }; // This line should only be needed if it is needed to support the object's constants for older browsers
-window.IdbResultKeyRange =
-  window.IdbResultKeyRange ||
-  window.webkitIdbResultKeyRange ||
-  window.msIdbResultKeyRange;
-
-// (Mozilla has never prefixed these objects, so we don't need window.mozIdbResult*)
-
 function dragenter(e) {
   e.stopPropagation();
   e.preventDefault();
@@ -32,6 +16,12 @@ const pingUpdate = () => {
   });
 };
 
+
+const updateMessage = message => {
+  const infoElement = document.getElementById("info");
+  infoElement.innerHTML = message;
+};
+
 window.onload = function() {
   dbMAG = new IndexedDBWrapper();
   dbMAG.openDB(function(ret) {
@@ -42,33 +32,28 @@ window.onload = function() {
   dropzone.addEventListener("dragenter", dragenter, false);
   dropzone.addEventListener("dragover", dragover, false);
   dropzone.addEventListener("drop", drop, false);
-
-  const button = document.getElementById("getAll");
-  button.addEventListener("click", function() {
-    dbMAG.getAll("faviconStorage", function(ret) {
-      console.log(ret);
-    });
-  });
 };
 
-let sitePattern = "";
-// Get the image file if it was dragged into the sidebar drop zone
 function drop(e) {
   e.stopPropagation();
   e.preventDefault();
   const urlParams = new URLSearchParams(window.location.search);
   const sitePattern = urlParams.get("sitePattern");
-  const data = {
-    sitePattern: sitePattern,
-    file: e.dataTransfer.files[0],
-    active: true
-  };
+  const file = e.dataTransfer.files[0];
+
+  if (!file) {
+    //TODO: Figure out why an image may be empty here.
+    updateMessage("Failed to upload the image, please try again");
+    return;
+  }
+
+  const data = genUploadData(sitePattern, file, true);
+
   dbMAG.upsert(data, function(e) {
     console.log("UPLOADED");
     if (e === sitePattern) {
       // Uploaded Successfully
-      const infoElement = document.getElementById("info");
-      infoElement.innerHTML = "Upload Success, Please close this window";
+      updateMessage("Upload Success, Please close this window");
       pingUpdate();
 
       // Remove the dropZone

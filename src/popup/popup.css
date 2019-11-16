@@ -18,6 +18,8 @@
 }
 
 .display_pattern {
+	min-width: 30%;
+	max-width: 30%;
 }
 
 .display_checkbox {
