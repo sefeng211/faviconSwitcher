@@ -16,9 +16,8 @@ const pingUpdate = () => {
   });
 };
 
-
 const updateMessage = message => {
-  const infoElement = document.getElementById("info");
+  const infoElement = document.getElementById("drop_zone_label");
   infoElement.innerHTML = message;
 };
 
@@ -29,6 +28,13 @@ window.onload = function() {
   });
 
   const dropzone = document.getElementById("drop_zone");
+  dropzone.addEventListener(
+    "dragenter dragstart dragend dragleave dragover drag drop",
+    function(e) {
+      e.preventDefault();
+    }
+  );
+
   dropzone.addEventListener("dragenter", dragenter, false);
   dropzone.addEventListener("dragover", dragover, false);
   dropzone.addEventListener("drop", drop, false);
@@ -41,9 +47,12 @@ function drop(e) {
   const sitePattern = urlParams.get("sitePattern");
   const file = e.dataTransfer.files[0];
 
+  console.log(e.dataTransfer.files);
   if (!file) {
     //TODO: Figure out why an image may be empty here.
-    updateMessage("Failed to upload the image, please try again");
+    updateMessage(
+      "Failed to upload the image, please close this window and try again"
+    );
     return;
   }
 

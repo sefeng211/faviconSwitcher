@@ -6,11 +6,11 @@
 	"description": "Replace ugly favicon",
 
 	"icons": {
-		"48": "icons/border-48.png"
+		"48": "icons/icon.png"
 	},
 	"browser_action": {
 		"default_icon": {
-			"48": "icons/sample.png"
+			"48": "icons/icon.png"
 		},
 		"default_title": "Favicon Switcher",
 		"default_popup": "src/popup/popup.html",

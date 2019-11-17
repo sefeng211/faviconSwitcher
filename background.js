@@ -73,7 +73,9 @@ function findMatchFile(url) {
       // Don't need to null check here because only non-null files have
       // been added to storedFavicon.
       const item = storedFavicon[filter];
+      console.log(item);
       if (item.active) {
+        console.log("returned");
         return item.file;
       }
     }

@@ -1,4 +1,5 @@
 const addIcon = iconPath => {
+  console.log("Add Icon");
   var link = document.createElement("link");
   link.rel = "shortcut icon";
   link.href = browser.extension.getURL(iconPath);
