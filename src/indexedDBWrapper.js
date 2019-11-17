@@ -22,8 +22,11 @@ const genUploadData = (sitePattern, file, active) => {
     file: file,
     active: active
   };
-}
+};
 
+// Took this wrapper from https://gist.github.com/wilsonpage/01d2eb139959c79e0d9a
+// TODO: I think we should switch it Promises, this one
+// https://gist.github.com/wilsonpage/01d2eb139959c79e0d9a looks good
 class IndexedDBWrapper {
   constructor() {
     this.db;
