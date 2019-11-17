@@ -3,7 +3,7 @@
     <img
       alt="FaviconSwitcher"
       src="icons/icon.png"
-      width="400"
+      width="300"
     />
   </a>
 </p>
