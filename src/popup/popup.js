@@ -10,7 +10,7 @@ let uploadImagePanel = {
 };
 
 // Ask the background script to update it's cache
-const pingUpdate = (data) => {
+const pingUpdate = data => {
   browser.runtime.sendMessage(data);
 };
 
@@ -23,7 +23,7 @@ const removeURLFromDB = url => {
       );
       if (removeElement) {
         removeElement.parentNode.removeChild(removeElement);
-        pingUpdate({task: "UpdateCache"});
+        pingUpdate({ task: "UpdateCache" });
       }
     }
   });
@@ -31,7 +31,7 @@ const removeURLFromDB = url => {
 
 function createSwitch(switchCounter, is_active) {
   let switchDiv = document.createElement("div");
-  switchDiv.className = "display_checkbox";
+  switchDiv.className = "display_checkbox browser-style";
 
   let switchButton = document.createElement("input");
   //let label = document.createElement("label");
@@ -46,7 +46,7 @@ function createSwitch(switchCounter, is_active) {
     console.log(event);
     const key = event.target.parentElement.parentElement.getAttribute("url");
     console.log("toggle" + key + " " + this.checked);
-    pingUpdate({task: "UpdateUrlActive", url: key, active: this.checked});
+    pingUpdate({ task: "UpdateUrlActive", url: key, active: this.checked });
   });
 
   switchDiv.appendChild(switchButton);
@@ -143,7 +143,7 @@ window.onload = function() {
   uploadImageButton.addEventListener("click", function() {
     if (!sitePattern.value) {
       // User must provide an url pattern before upload an image.
-      console.log("Empty site pattern");
+      sitePattern.classList.add("input_box_placeholder");
     } else {
       dragPanelUrl = dragPanelUrl + "?sitePattern=" + sitePattern.value;
       uploadImagePanel.url = dragPanelUrl;

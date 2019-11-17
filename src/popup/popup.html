@@ -7,22 +7,16 @@
     <script src="../indexedDBWrapper.js"></script>
   </head>
   <body>
-    <h1 style="text-align: center">Favicon Switcher</h1>
-    <div style="margin:20px;" class="browser-style">
-      <h2>Existing URL Patterns</h2>
+    <h2 id="title">Favicon Switcher</h2>
+    <div id="display_area" style="margin:20px;" class="browser-style">
+      <h3 id="existing_title">Existing URL Patterns</h3>
       <div id="display_zone"></div>
-      <div id="picker_zone">
-        <div id="setting_zone" class="browser-style">
-          <input
-            type="text"
-            placeholder="Enter a URL pattern"
-            id="site_pattern"
-          />
-          <button class="browser-style" id="upload_image">
-            Upload Image
-          </button>
-        </div>
-      </div>
+    </div>
+    <div id="setting_zone" class="browser-style">
+      <input type="text" placeholder="Enter a URL pattern" id="site_pattern" />
+      <button class="browser-style" id="upload_image">
+        Upload Image
+      </button>
     </div>
   </body>
 </html>
