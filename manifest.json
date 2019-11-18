@@ -3,7 +3,7 @@
 	"name": "FaviconSwitcher",
 	"version": "1.0",
 
-	"description": "Replace ugly favicon",
+	"description": "Replace ugly favicon by uploading your own images.",
 
 	"icons": {
 		"48": "icons/icon.png"
@@ -26,11 +26,5 @@
 		"scripts": ["src/indexedDBWrapper.js", "background.js"]
 	},
 	"permissions": ["tabs", "notifications", "activeTab", "storage"],
-	"web_accessible_resources": ["src/*"],
-	"browser_specific_settings": {
-		"gecko": {
-			"id": "sean@seanfeng.dev",
-			"strict_min_version": "42.0"
-		}
-	}
+	"web_accessible_resources": ["src/*"]
 }

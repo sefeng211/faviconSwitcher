@@ -1,5 +1,6 @@
 var storedFavicon = {};
 function updateFavicon(dbManager) {
+  storedFavicon = {};
   // Same as the hack in popup.js
   // TODO: Fix me
   if (!dbManager.db) {
@@ -31,7 +32,6 @@ function UpdateUrlActive(dbManager, url, active) {
     return;
   }
 
-  console.log("UpdateUrlActive!!!");
   let keys = Object.keys(storedFavicon);
   let data = storedFavicon[url];
   if (data) {
@@ -40,7 +40,6 @@ function UpdateUrlActive(dbManager, url, active) {
     dbManager.upsert(data, function(e) {
       if (e === url) {
         // Uploaded Successfully
-        console.log("Toggle Success");
         updateFavicon(dbManager);
       }
     });
@@ -73,9 +72,7 @@ function findMatchFile(url) {
       // Don't need to null check here because only non-null files have
       // been added to storedFavicon.
       const item = storedFavicon[filter];
-      console.log(item);
       if (item.active) {
-        console.log("returned");
         return item.file;
       }
     }
@@ -94,10 +91,8 @@ browser.tabs.onUpdated.addListener(function(tabId, changeInfo, tabInfo) {
 
 browser.runtime.onMessage.addListener(function(request, sender, sendMessage) {
   if (request.task === "UpdateCache") {
-    console.log("Update cache");
     updateFavicon(dbManager);
   } else if (request.task === "UpdateUrlActive") {
-    console.log("Update Url active");
     const url = request.url;
     const active = request.active;
     UpdateUrlActive(dbManager, url, active);

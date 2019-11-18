@@ -29,6 +29,11 @@ const removeURLFromDB = url => {
   });
 };
 
+const updateImageForUrl = url => {
+  dragPanelUrl = dragPanelUrl + "?sitePattern=" + url + '&' + 'mode=update';
+  uploadImagePanel.url = dragPanelUrl;
+  var createdPanel = browser.windows.create(uploadImagePanel);
+};
 function createSwitch(switchCounter, is_active) {
   let switchDiv = document.createElement("div");
   switchDiv.className = "display_checkbox browser-style";
@@ -43,9 +48,7 @@ function createSwitch(switchCounter, is_active) {
   switchButton.checked = is_active;
 
   switchButton.addEventListener("change", function(event) {
-    console.log(event);
     const key = event.target.parentElement.parentElement.getAttribute("url");
-    console.log("toggle" + key + " " + this.checked);
     pingUpdate({ task: "UpdateUrlActive", url: key, active: this.checked });
   });
 
@@ -92,11 +95,17 @@ function loopSitePairs(data, index) {
     tmpDiv.appendChild(switchButton);
     tmpDiv.appendChild(removeButton);
 
+    // Allow users to remove their button
     removeButton.addEventListener("click", function(event) {
       const removeKey = event.target.parentElement.getAttribute("url");
       removeURLFromDB(removeKey);
     });
 
+    // Allow users to replace the image
+    image.addEventListener("click", function(event) {
+      const updateKey = event.target.parentElement.getAttribute("url");
+      updateImageForUrl(updateKey);
+    });
     document.getElementById("display_zone").appendChild(tmpDiv);
     var nextIndex = index + 1;
     loopSitePairs(data, nextIndex);
@@ -122,7 +131,6 @@ function updateFaviconList(dbManager) {
   }
 
   dbManager.getAll(function(ret) {
-    console.log(ret);
     loopSitePairs(ret, 0);
   });
 }
@@ -145,7 +153,7 @@ window.onload = function() {
       // User must provide an url pattern before upload an image.
       sitePattern.classList.add("input_box_placeholder");
     } else {
-      dragPanelUrl = dragPanelUrl + "?sitePattern=" + sitePattern.value;
+      dragPanelUrl = dragPanelUrl + "?sitePattern=" + sitePattern.value + '&' + 'mode=add';
       uploadImagePanel.url = dragPanelUrl;
       var createdPanel = browser.windows.create(uploadImagePanel);
     }

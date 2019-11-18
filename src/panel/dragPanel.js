@@ -24,7 +24,6 @@ const updateMessage = message => {
 window.onload = function() {
   dbMAG = new IndexedDBWrapper();
   dbMAG.openDB(function(ret) {
-    console.log(ret);
   });
 
   const dropzone = document.getElementById("drop_zone");
@@ -45,9 +44,9 @@ function drop(e) {
   e.preventDefault();
   const urlParams = new URLSearchParams(window.location.search);
   const sitePattern = urlParams.get("sitePattern");
+  const mode = urlParams.get("mode");
   const file = e.dataTransfer.files[0];
 
-  console.log(e.dataTransfer.files);
   if (!file) {
     //TODO: Figure out why an image may be empty here.
     updateMessage(
@@ -59,7 +58,6 @@ function drop(e) {
   const data = genUploadData(sitePattern, file, true);
 
   dbMAG.upsert(data, function(e) {
-    console.log("UPLOADED");
     if (e === sitePattern) {
       // Uploaded Successfully
       updateMessage("Upload Success, Please close this window");
@@ -69,6 +67,5 @@ function drop(e) {
       const dropZone = document.getElementById("drop_zone");
       dropZone.parentNode.removeChild(dropZone);
     }
-    console.log(e);
   });
 }
