@@ -17,8 +17,12 @@ const pingUpdate = () => {
 };
 
 const updateMessage = message => {
-  const infoElement = document.getElementById("drop_zone_label");
-  infoElement.innerHTML = message;
+  const curInfoElement = document.getElementById("drop_zone_label");
+  const newInfoElement = document.createElement("p");
+  const node = document.createTextNode(message);
+  newInfoElement.appendChild(node);
+
+  document.body.replaceChild(newInfoElement, curInfoElement);
 };
 
 window.onload = function() {

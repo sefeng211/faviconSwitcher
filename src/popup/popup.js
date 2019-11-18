@@ -83,7 +83,9 @@ function loopSitePairs(data, index) {
     image.style.width = "30px";
     image.className = "display_image";
 
-    name.innerHTML = sitePattern;
+    const content = document.createTextNode(sitePattern);
+    name.appendChild(content);
+
     image.src = e.target.result;
 
     var tmpDiv = document.createElement("div");
