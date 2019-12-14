@@ -4,12 +4,6 @@
 	background-color: LightSteelBlue;
 }
 
-#drop_zone {
-	border: 5px solid blue;
-	width: 100%;
-	height: 100%;
-}
-
 #display_area {
 	background-color: AliceBlue;
 }
