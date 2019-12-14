@@ -39,6 +39,11 @@ dropzone.addEventListener('drop', function (e) {
 
 dropzone.addEventListener('drop', drop, false);
 
+document.querySelector("#input").addEventListener('change', onFilePicker);
+document.querySelector("#upload-image").addEventListener('click', function(e) {
+    document.querySelector("input").click();
+});
+
 var dbMAG;
 // Ask the background script to update it's cache
 const pingUpdate = () => {
@@ -69,13 +74,9 @@ const removeDropZone = () => {
   dropZone.parentNode.removeChild(dropZone);
 }
 
-function drop(e) {
-  e.preventDefault();
+function _uploadFile(files) {
   const urlParams = new URLSearchParams(window.location.search);
   const sitePattern = urlParams.get("sitePattern");
-  const mode = urlParams.get("mode");
-
-  const files = e.target.files || e.dataTransfer.files;
 
   if (files[0]) {
     removeEvent();
@@ -108,4 +109,14 @@ function drop(e) {
       removeDropZone();
     }
   });
+}
+
+function onFilePicker(e) {
+  _uploadFile(this.files);
+}
+
+function drop(e) {
+  e.preventDefault();
+  const files = e.target.files || e.dataTransfer.files;
+  _uploadFile(files);
 }
