@@ -27,6 +27,8 @@
 	display: flex;
 	justify-content: space-between;
 	padding-bottom: 10px;
+	width:350px;
+	max-width:100%;
 }
 
 .display_image {
@@ -36,6 +38,14 @@
 .display_pattern {
 	min-width: 30%;
 	max-width: 30%;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+  	overflow: hidden;
+}
+.display_pattern:hover{
+    text-overflow:clip;
+    width:auto;
+    white-space: normal;
 }
 
 .display_checkbox {
