@@ -8,7 +8,7 @@ function isImage(filename) {
     switch (ext.toLowerCase()) {
     case 'jpg':
     case 'jpeg':
-    case 'gif':
+    case 'ico':
     case 'png':
         //etc
         return true;
@@ -85,7 +85,7 @@ function _uploadFile(files) {
   //TODO: Figure out why an image may be empty here.
   if (!files[0]) {
     updateMessage(
-      "Failed to upload the image, please close this window and try again."
+      "Only image file is accepted (jpg, jpeg, png, ico), please close this window and try again."
     );
     removeDropZone();
     return;
