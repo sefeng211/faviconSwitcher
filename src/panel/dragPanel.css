@@ -1,0 +1,35 @@
+#drop_zone_label {
+	top: 0; bottom: 0; left: 0; right: 0;
+	/*font-family: 'Times New Roman', Times, serif;*/
+	margin:auto; text-align: center;
+}
+
+#drop_zone {
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin: auto;
+      border: 3px dashed blue;
+      width: 200px;
+      height: 200px;
+      text-align: center;
+      position: absolute;
+}
+
+#upload-image {
+     cursor:pointer;
+     color:blue;
+     text-decoration:underline;
+     text-align:center;
+     width: 100%;
+}
+
+#or-text {
+	text-align:: center;
+
+}
+p {
+      font-family: sans-serif;
+      text-align: center;
+}
