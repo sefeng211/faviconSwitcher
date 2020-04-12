@@ -14,13 +14,10 @@ const pingUpdate = data => {
   browser.runtime.sendMessage(data);
 };
 
-const removeURLFromDB = url => {
+const removeURLFromDB = (url, removeElement) => {
   dbManager.remove(url, function(e) {
     if (!e) {
       //success
-      let removeElement = document.querySelector(
-        "div[url=" + "'" + url + "'" + "]"
-      );
       if (removeElement) {
         removeElement.parentNode.removeChild(removeElement);
         pingUpdate({ task: "UpdateCache" });
@@ -100,7 +97,7 @@ function loopSitePairs(data, index) {
     // Allow users to remove their button
     removeButton.addEventListener("click", function(event) {
       const removeKey = event.target.parentElement.getAttribute("url");
-      removeURLFromDB(removeKey);
+      removeURLFromDB(removeKey, event.target.parentElement);
     });
 
     // Allow users to replace the image

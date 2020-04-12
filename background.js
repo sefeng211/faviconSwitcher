@@ -60,15 +60,21 @@ const GlobalUrlFilter = {
 
 //TODO: Find/Implement a better algorithm
 const compareURL = (url, filter) => {
+  const spaceReplacedFilter = filter.replace(/ /g, '%20');
   let regex = RegExp(filter);
-  return regex.test(url);
+  if (regex.test(url)) {
+    return true;
+  } else {
+    regex = RegExp(spaceReplacedFilter);
+    return regex.test(url);
+  }
 };
 
 function findMatchFile(url) {
   let keys = Object.keys(storedFavicon);
 
   for (const filter of keys) {
-    if (compareURL(url, filter)) {
+    if (compareURL(url.trim(), filter.trim())) {
       // Don't need to null check here because only non-null files have
       // been added to storedFavicon.
       const item = storedFavicon[filter];
