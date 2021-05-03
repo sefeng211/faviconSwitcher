@@ -44,6 +44,31 @@ document.querySelector("#upload-image").addEventListener('click', function(e) {
     document.querySelector("input").click();
 });
 
+document.getElementById("drop_link_button").addEventListener("click", function() {
+    const input_field = document.getElementById("drop_link_input_field");
+    const favicon_url = input_field.value;
+    if (!favicon_url) {
+      input_field.classList.add("input_box_placeholder");
+    } else {
+      if (!favicon_url.startsWith("http") && !favicon_url.startsWith("https")) {
+        updateMessage("Error: The input url must be started with either 'http' or 'https'");
+        removeDropArea();
+        return;
+      }
+      const urlParams = new URLSearchParams(window.location.search);
+      const sitePattern = urlParams.get("sitePattern");
+      const data = genUploadData(sitePattern, favicon_url, true);
+      dbMAG.upsert(data, function(e) {
+        if (e === sitePattern) {
+          // Uploaded Successfully
+          updateMessage("The link is saved successfully, Please close this window");
+          pingUpdate();
+          removeDropArea();
+        }
+      });
+    }
+});
+
 var dbMAG;
 // Ask the background script to update it's cache
 const pingUpdate = () => {
@@ -69,9 +94,12 @@ window.onload = function() {
   });
 };
 
-const removeDropZone = () => {
+const removeDropArea = () => {
   const dropZone = document.getElementById("drop_zone");
   dropZone.parentNode.removeChild(dropZone);
+
+  const dropLinkDiv = document.getElementById("drop_link_div");
+  dropLinkDiv.parentNode.removeChild(dropLinkDiv);
 }
 
 function _uploadFile(files) {
@@ -87,7 +115,7 @@ function _uploadFile(files) {
     updateMessage(
       "Only image file is accepted (jpg, jpeg, png, ico), please close this window and try again."
     );
-    removeDropZone();
+    removeDropArea();
     return;
   }
 
@@ -95,7 +123,7 @@ function _uploadFile(files) {
     updateMessage(
       "This is not a image file, please upload an image file."
     );
-    removeDropZone();
+    removeDropArea();
     return;
   }
 
@@ -106,7 +134,7 @@ function _uploadFile(files) {
       // Uploaded Successfully
       updateMessage("Upload Success, Please close this window");
       pingUpdate();
-      removeDropZone();
+      removeDropArea();
     }
   });
 }

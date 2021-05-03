@@ -23,6 +23,7 @@
 	margin-left: 20px;
 	margin-right: 20px;
 }
+
 .row_display {
 	display: flex;
 	justify-content: space-between;
@@ -34,6 +35,20 @@
 
 .display_image {
 	text-align: center;
+    height: 30px;
+    width: 30px;
+}
+
+.url_image {
+    border: 3px solid #008B8B;
+}
+
+.local_image {
+    border: 3px solid LightSteelBlue;
+}
+
+.display_image:hover {
+    opacity: 0.7;
 }
 
 .display_pattern {
@@ -43,13 +58,11 @@
 	white-space: nowrap;
   	overflow: hidden;
 }
+
 .display_pattern:hover{
     text-overflow:clip;
     width:auto;
     white-space: normal;
-}
-
-.display_checkbox {
 }
 
 .input_box_placeholder::placeholder {
@@ -57,3 +70,64 @@
 	color: red;
 	opacity: 1; /* Firefox */
 }
+
+
+/* Rounded Slider Start*/
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 18px;
+  top: 3px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+/* Rounded Slider End*/

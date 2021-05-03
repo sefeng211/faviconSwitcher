@@ -33,24 +33,76 @@ const updateImageForUrl = url => {
 };
 function createSwitch(switchCounter, is_active) {
   let switchDiv = document.createElement("div");
-  switchDiv.className = "display_checkbox browser-style";
+  switchDiv.className = "browser-style";
 
-  let switchButton = document.createElement("input");
-  //let label = document.createElement("label");
+  let switchLabel = document.createElement("label");
+  switchLabel.className = "switch";
 
-  switchButton.type = "checkbox";
-  switchButton.className = "visually-hidden";
-  switchButton.id = "switch" + switchCounter;
+  let switchInput = document.createElement("input");
+  switchInput.type = "checkbox";
+  switchInput.checked = is_active;
 
-  switchButton.checked = is_active;
+  let switchSpan = document.createElement("span");
+  switchSpan.className = "slider round";
 
-  switchButton.addEventListener("change", function(event) {
-    const key = event.target.parentElement.parentElement.getAttribute("url");
+  switchLabel.appendChild(switchInput);
+  switchLabel.appendChild(switchSpan);
+
+  switchInput.addEventListener("change", function(event) {
+    const key = event.target.parentElement.parentElement.parentElement.getAttribute("url");
     pingUpdate({ task: "UpdateUrlActive", url: key, active: this.checked });
   });
 
-  switchDiv.appendChild(switchButton);
+  switchDiv.appendChild(switchLabel);
   return switchDiv;
+}
+
+function createURLRow(image_location, index, is_active, sitePattern, is_url) {
+  var name = document.createElement("div");
+  var image = document.createElement("img");
+  var switchButton = createSwitch(index, is_active);
+  var removeButton = document.createElement("button");
+
+  removeButton.innerHTML = "Remove";
+  removeButton.className = "browser-style";
+
+  name.className = "display_pattern";
+
+  image.className = "display_image";
+
+  if (is_url) {
+    image.className += " url_image";
+  } else {
+    image.className += " local_image";
+  }
+
+  const content = document.createTextNode(sitePattern);
+  name.appendChild(content);
+
+  image.src = image_location;
+
+  var tmpDiv = document.createElement("div");
+  tmpDiv.className = "row_display";
+  tmpDiv.setAttribute("url", sitePattern);
+
+  tmpDiv.appendChild(name);
+  tmpDiv.appendChild(image);
+  tmpDiv.appendChild(switchButton);
+  tmpDiv.appendChild(removeButton);
+
+  // Allow users to remove their button
+  removeButton.addEventListener("click", function(event) {
+    const removeKey = event.target.parentElement.getAttribute("url");
+    removeURLFromDB(removeKey, event.target.parentElement);
+  });
+
+  // Allow users to replace the image
+  image.addEventListener("click", function(event) {
+    const updateKey = event.target.parentElement.getAttribute("url");
+    updateImageForUrl(updateKey);
+  });
+
+  document.getElementById("display_zone").appendChild(tmpDiv);
 }
 
 function loopSitePairs(data, index) {
@@ -65,56 +117,23 @@ function loopSitePairs(data, index) {
   const reader = new FileReader();
 
   reader.onload = function(e) {
-    var name = document.createElement("div");
-    var image = document.createElement("img");
-    var switchButton = createSwitch(index, is_active);
-    var removeButton = document.createElement("button");
-
-    removeButton.innerHTML = "Remove";
-    removeButton.className = "browser-style";
-
-    //name.style.width = "100px";
-    name.className = "display_pattern";
-
-    image.style.height = "30px";
-    image.style.width = "30px";
-    image.className = "display_image";
-
-    const content = document.createTextNode(sitePattern);
-    name.appendChild(content);
-
-    image.src = e.target.result;
-
-    var tmpDiv = document.createElement("div");
-    tmpDiv.className = "row_display";
-    tmpDiv.setAttribute("url", sitePattern);
-
-    tmpDiv.appendChild(name);
-    tmpDiv.appendChild(image);
-    tmpDiv.appendChild(switchButton);
-    tmpDiv.appendChild(removeButton);
-
-    // Allow users to remove their button
-    removeButton.addEventListener("click", function(event) {
-      const removeKey = event.target.parentElement.getAttribute("url");
-      removeURLFromDB(removeKey, event.target.parentElement);
-    });
-
-    // Allow users to replace the image
-    image.addEventListener("click", function(event) {
-      const updateKey = event.target.parentElement.getAttribute("url");
-      updateImageForUrl(updateKey);
-    });
-    document.getElementById("display_zone").appendChild(tmpDiv);
+    createURLRow(e.target.result, index, is_active, sitePattern, false);
     var nextIndex = index + 1;
     loopSitePairs(data, nextIndex);
   };
 
   if (file) {
-    reader.readAsDataURL(file);
+    if (typeof file === 'object') {
+      reader.readAsDataURL(file);
+    } else if (typeof file === 'string') {
+      createURLRow(file, index, is_active, sitePattern, true);
+      loopSitePairs(data, index + 1);
+    } else {
+      console.log("faviconswitcher: invalid file is detected, what is it?");
+      loopSitePairs(data, index + 1);
+    }
   } else {
-    var nextIndex = index + 1;
-    loopSitePairs(data, nextIndex);
+    loopSitePairs(data, index + 1);
   }
 }
 
@@ -135,6 +154,7 @@ function updateFaviconList(dbManager) {
 }
 
 let sitePattern;
+
 window.onload = function() {
   dbManager = new IndexedDBWrapper();
   dbManager.openDB();

@@ -7,9 +7,13 @@ const addIcon = iconPath => {
 
 browser.runtime.onMessage.addListener(request => {
   var file = request.file;
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    addIcon(e.target.result);
-  };
-  reader.readAsDataURL(file);
+  if (typeof file === 'object') {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      addIcon(e.target.result);
+    };
+    reader.readAsDataURL(file);
+  } else if (typeof file === 'string') {
+    addIcon(file);
+  }
 });
