@@ -63,6 +63,8 @@
     text-overflow:clip;
     width:auto;
     white-space: normal;
+    font-weight: bold;
+    cursor:pointer;
 }
 
 .input_box_placeholder::placeholder {
