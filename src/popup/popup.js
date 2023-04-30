@@ -11,6 +11,7 @@ let uploadImagePanel = {
 
 // Ask the background script to update it's cache
 const pingUpdate = data => {
+  console.debug(`PingUpdate ${JSON.stringify(data)}`);
   browser.runtime.sendMessage(data);
 };
 
@@ -26,11 +27,58 @@ const removeURLFromDB = (url, removeElement) => {
   });
 };
 
+function createURLElement(url) {
+  var name = document.createElement("div");
+  name.className = "display_pattern"
+  const content = document.createTextNode(url);
+  name.appendChild(content);
+
+  // Allow users to modify the url pattern
+  name.addEventListener("click", (event) => {
+    const updateKey = event.target.parentElement.getAttribute("url");
+    const editInput = document.createElement("input");
+    editInput.addEventListener("focusout", () => {
+      if (editInput.value) {
+        pingUpdate({task: "UpdateExistingURL", oldURL: updateKey, newURL: editInput.value});
+      }
+    });
+    editInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && editInput.value) {
+        pingUpdate({task: "UpdateExistingURL", oldURL: updateKey, newURL: editInput.value});
+      }
+    });
+
+    editInput.value = updateKey;
+    name.replaceWith(editInput);
+
+    editInput.focus();
+  });
+
+  return name;
+}
+
+const RemoeInputAndUpdateURL = (oldURL, newURL) => {
+  console.debug("RemoveInputAndUpdateURL");
+  const rows = document.getElementById("display_zone").querySelectorAll(".row_display");
+
+  for (const row of rows) {
+    const currentURL = row.getAttribute("url");
+    if (currentURL === oldURL) {
+      // Should have an input element
+      row.setAttribute("url", newURL);
+      const editInput = row.querySelector("input");
+      editInput.replaceWith(createURLElement(newURL));
+      return;
+    }
+  }
+}
+
 const updateImageForUrl = url => {
   dragPanelUrl = dragPanelUrl + "?sitePattern=" + url + '&' + 'mode=update';
   uploadImagePanel.url = dragPanelUrl;
   var createdPanel = browser.windows.create(uploadImagePanel);
 };
+
 function createSwitch(switchCounter, is_active) {
   let switchDiv = document.createElement("div");
   switchDiv.className = "browser-style";
@@ -58,15 +106,13 @@ function createSwitch(switchCounter, is_active) {
 }
 
 function createURLRow(image_location, index, is_active, sitePattern, is_url) {
-  var name = document.createElement("div");
+  var name = createURLElement(sitePattern);
   var image = document.createElement("img");
   var switchButton = createSwitch(index, is_active);
   var removeButton = document.createElement("button");
 
   removeButton.innerHTML = "Remove";
   removeButton.className = "browser-style";
-
-  name.className = "display_pattern";
 
   image.className = "display_image";
 
@@ -75,9 +121,6 @@ function createURLRow(image_location, index, is_active, sitePattern, is_url) {
   } else {
     image.className += " local_image";
   }
-
-  const content = document.createTextNode(sitePattern);
-  name.appendChild(content);
 
   image.src = image_location;
 
@@ -129,7 +172,7 @@ function loopSitePairs(data, index) {
       createURLRow(file, index, is_active, sitePattern, true);
       loopSitePairs(data, index + 1);
     } else {
-      console.log("faviconswitcher: invalid file is detected, what is it?");
+      console.debug("faviconswitcher: invalid file is detected, what is it?");
       loopSitePairs(data, index + 1);
     }
   } else {
@@ -178,3 +221,11 @@ window.onload = function() {
     }
   });
 };
+
+browser.runtime.onMessage.addListener(function(request, sender, sendMessage) {
+  if (request.task === "URLUpdated") {
+    const oldURL = request.oldURL;
+    const newURL = request.newURL;
+    RemoeInputAndUpdateURL(oldURL, newURL);
+  }
+});

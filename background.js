@@ -24,6 +24,45 @@ function updateFavicon(dbManager) {
   });
 }
 
+const pingUpdate = data => {
+  browser.runtime.sendMessage(data);
+};
+
+function UpdateExistingURL(dbManager, oldURL, newURL) {
+  console.log(`background UpdateExistingURL ${oldURL}, ${newURL}`);
+  if (oldURL === newURL) {
+    pingUpdate({task: "URLUpdated", oldURL: oldURL, newURL: newURL});
+    return;
+  }
+  if (!dbManager.db) {
+    setTimeout(function() {
+      UpdateExistingURL(dbManager, oldURL, newURL);
+    }, 1000);
+    return;
+  }
+
+  let keys = Object.keys(storedFavicon);
+  let data = storedFavicon[oldURL];
+  if (data) {
+    // Remove old pattern
+    data.sitePattern = newURL;
+    dbManager.remove(oldURL, function(e) {
+      if (!e) {
+        // success
+        dbManager.upsert(data, function(e) {
+          if (e === newURL ) {
+            // Uploaded Successfully
+            updateFavicon(dbManager);
+            pingUpdate({task: "URLUpdated", oldURL: oldURL, newURL: newURL});
+          }
+        });
+      }
+    });
+  } else {
+    // Is it possible?
+  }
+}
+
 function UpdateUrlActive(dbManager, url, active) {
   if (!dbManager.db) {
     setTimeout(function() {
@@ -47,6 +86,7 @@ function UpdateUrlActive(dbManager, url, active) {
     // Is it possible?
   }
 }
+
 var dbManager = new IndexedDBWrapper();
 dbManager.openDB();
 
@@ -102,5 +142,9 @@ browser.runtime.onMessage.addListener(function(request, sender, sendMessage) {
     const url = request.url;
     const active = request.active;
     UpdateUrlActive(dbManager, url, active);
+  } else if (request.task === "UpdateExistingURL") {
+    const oldURL = request.oldURL;
+    const newURL = request.newURL;
+    UpdateExistingURL(dbManager, oldURL, newURL);
   }
 });
