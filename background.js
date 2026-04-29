@@ -1,10 +1,13 @@
 function compareURL(url) {
-    const parsedURL = new URL(url);
-    const origin = parsedURL.origin;
-    const pathname = parsedURL.pathname;
-    return { origin, pathname };
+    try {
+        const parsedURL = new URL(url);
+        const origin = parsedURL.origin;
+        const pathname = parsedURL.pathname;
+        // Use the origin and pathname for pattern matching
+        // Existing pattern matching logic goes here
+    } catch (error) {
+        console.error('Error parsing URL:', error);
+    }
 }
 
-// Example usage:
-const result = compareURL('https://example.com/path/to/resource?query=param');
-console.log(result); // { origin: 'https://example.com', pathname: '/path/to/resource' }
+// Other existing code...
