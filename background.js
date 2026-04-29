@@ -1,13 +1,9 @@
-function compareURL(url) {
+function compareURL(url, pattern) {
+    const urlObj = new URL(url);
     try {
-        const parsedURL = new URL(url);
-        const origin = parsedURL.origin;
-        const pathname = parsedURL.pathname;
-        // Use the origin and pathname for pattern matching
-        // Existing pattern matching logic goes here
+        return pattern.test(urlObj.origin + urlObj.pathname);
     } catch (error) {
-        console.error('Error parsing URL:', error);
+        console.error('Error in regex test:', error);
+        return false;
     }
 }
-
-// Other existing code...
